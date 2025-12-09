@@ -11,13 +11,18 @@ $pythonCheck = Get-Command python -ErrorAction SilentlyContinue
 if (-not $pythonCheck) {
     Write-Host "[ERROR] Python is not installed!" -ForegroundColor Red
     Write-Host "Please install Python 3.8+ from https://www.python.org/downloads/" -ForegroundColor Yellow
-    Write-Host "Make sure to check 'Add Python to PATH' during installation" -ForegroundColor Yellow
     Read-Host "Press Enter to exit"
     exit 1
 }
 
 $pythonVersion = python --version 2>&1
 Write-Host "[OK] Python found: $pythonVersion" -ForegroundColor Green
+
+# Check Python version and warn if 3.13
+if ($pythonVersion -match "3\.13") {
+    Write-Host "[WARNING] Python 3.13 detected - using minimal dependencies" -ForegroundColor Yellow
+    Write-Host "[INFO] Some packages need C++ compiler on Windows" -ForegroundColor Yellow
+}
 Write-Host ""
 
 # Create virtual environment if it doesn't exist
@@ -47,19 +52,42 @@ if (Test-Path $activateScript) {
     exit 1
 }
 
-# Upgrade pip and install dependencies
-Write-Host "[INFO] Installing dependencies (this may take a moment)..." -ForegroundColor Yellow
+# Upgrade pip
+Write-Host "[INFO] Upgrading pip..." -ForegroundColor Yellow
 python -m pip install --upgrade pip --quiet
-pip install -r requirements.txt --quiet
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] Failed to install dependencies!" -ForegroundColor Red
-    Write-Host "Try running: pip install -r requirements.txt" -ForegroundColor Yellow
-    Read-Host "Press Enter to exit"
-    exit 1
+# Try to install from minimal requirements first (works with Python 3.13)
+Write-Host "[INFO] Installing core dependencies..." -ForegroundColor Yellow
+if (Test-Path "requirements-minimal.txt") {
+    pip install -r requirements-minimal.txt
+
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "[OK] Core dependencies installed successfully" -ForegroundColor Green
+        Write-Host "[INFO] System ready with core features" -ForegroundColor Cyan
+    } else {
+        Write-Host "[ERROR] Failed to install core dependencies" -ForegroundColor Red
+        Write-Host "Try: pip install flask flask-cors ezdxf python-dotenv" -ForegroundColor Yellow
+        Read-Host "Press Enter to exit"
+        exit 1
+    }
+} else {
+    Write-Host "[WARNING] requirements-minimal.txt not found, trying full install..." -ForegroundColor Yellow
+    pip install -r requirements.txt --quiet
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "[ERROR] Failed to install dependencies!" -ForegroundColor Red
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "SOLUTION: Python 3.13 is too new for some packages." -ForegroundColor Yellow
+        Write-Host "Option 1: Install Python 3.11 or 3.12 (Recommended)" -ForegroundColor Cyan
+        Write-Host "Option 2: Install Microsoft C++ Build Tools" -ForegroundColor Cyan
+        Write-Host "          https://visualstudio.microsoft.com/visual-cpp-build-tools/" -ForegroundColor Cyan
+        Write-Host ""
+        Read-Host "Press Enter to exit"
+        exit 1
+    }
+    Write-Host "[OK] Dependencies installed" -ForegroundColor Green
 }
 
-Write-Host "[OK] Dependencies installed" -ForegroundColor Green
 Write-Host ""
 
 # Create necessary directories
@@ -72,7 +100,7 @@ if (-not (Test-Path "temp")) {
 Write-Host "[OK] Directories created" -ForegroundColor Green
 Write-Host ""
 
-# Copy .env.example to .env if .env doesn't exist
+# Copy .env.example to .env if doesn't exist
 if (-not (Test-Path ".env")) {
     if (Test-Path ".env.example") {
         Copy-Item ".env.example" ".env"

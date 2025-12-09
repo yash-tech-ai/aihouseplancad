@@ -1,0 +1,20 @@
+# Minimal requirements that work with Python 3.13
+# Core functionality without image processing
+
+# Core Framework (Required)
+flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+
+# CAD Libraries (Required)
+ezdxf==1.2.0
+
+# Optional: Uncomment these after installing Microsoft C++ Build Tools
+# Pillow==10.3.0
+# reportlab==4.2.0
+# numpy==1.26.4
+# scipy==1.13.0
+
+# Development Tools (Optional)
+# pytest==8.1.1
+# black==24.3.0
