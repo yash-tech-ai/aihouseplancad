@@ -4,6 +4,7 @@ Production-grade with comprehensive error handling and validation
 """
 from flask import Blueprint, request, jsonify, send_file
 from werkzeug.utils import secure_filename
+from typing import Dict, List
 import os
 import traceback
 from app.core.ai_architect import AIArchitect
