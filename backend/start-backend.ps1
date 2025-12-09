@@ -8,10 +8,8 @@ Write-Host "╚═════════════════════�
 Write-Host ""
 
 # Check if Python is installed
-try {
-    $pythonVersion = python --version 2>&1
-    Write-Host "[✓] Python found: $pythonVersion" -ForegroundColor Green
-} catch {
+$pythonCheck = Get-Command python -ErrorAction SilentlyContinue
+if (-not $pythonCheck) {
     Write-Host "[ERROR] Python is not installed!" -ForegroundColor Red
     Write-Host "Please install Python 3.8+ from https://www.python.org/downloads/" -ForegroundColor Yellow
     Write-Host "Make sure to check 'Add Python to PATH' during installation" -ForegroundColor Yellow
@@ -19,20 +17,36 @@ try {
     exit 1
 }
 
+$pythonVersion = python --version 2>&1
+Write-Host "[✓] Python found: $pythonVersion" -ForegroundColor Green
 Write-Host ""
 
 # Create virtual environment if it doesn't exist
-if (!(Test-Path "venv")) {
+if (-not (Test-Path "venv")) {
     Write-Host "[INFO] Creating Python virtual environment..." -ForegroundColor Yellow
     python -m venv venv
-    Write-Host "[✓] Virtual environment created" -ForegroundColor Green
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "[✓] Virtual environment created" -ForegroundColor Green
+    } else {
+        Write-Host "[ERROR] Failed to create virtual environment" -ForegroundColor Red
+        Read-Host "Press Enter to exit"
+        exit 1
+    }
 } else {
     Write-Host "[✓] Virtual environment exists" -ForegroundColor Green
 }
 
 # Activate virtual environment
 Write-Host "[INFO] Activating virtual environment..." -ForegroundColor Yellow
-& .\venv\Scripts\Activate.ps1
+$activateScript = ".\venv\Scripts\Activate.ps1"
+if (Test-Path $activateScript) {
+    & $activateScript
+    Write-Host "[✓] Virtual environment activated" -ForegroundColor Green
+} else {
+    Write-Host "[ERROR] Cannot find activation script" -ForegroundColor Red
+    Read-Host "Press Enter to exit"
+    exit 1
+}
 
 # Upgrade pip and install dependencies
 Write-Host "[INFO] Installing dependencies (this may take a moment)..." -ForegroundColor Yellow
@@ -50,15 +64,21 @@ Write-Host "[✓] Dependencies installed" -ForegroundColor Green
 Write-Host ""
 
 # Create necessary directories
-if (!(Test-Path "uploads")) { New-Item -ItemType Directory -Path "uploads" | Out-Null }
-if (!(Test-Path "temp")) { New-Item -ItemType Directory -Path "temp" | Out-Null }
+if (-not (Test-Path "uploads")) {
+    New-Item -ItemType Directory -Path "uploads" | Out-Null
+}
+if (-not (Test-Path "temp")) {
+    New-Item -ItemType Directory -Path "temp" | Out-Null
+}
 Write-Host "[✓] Directories created" -ForegroundColor Green
 Write-Host ""
 
 # Copy .env.example to .env if .env doesn't exist
-if (!(Test-Path ".env")) {
-    Copy-Item ".env.example" ".env"
-    Write-Host "[✓] Environment file created" -ForegroundColor Green
+if (-not (Test-Path ".env")) {
+    if (Test-Path ".env.example") {
+        Copy-Item ".env.example" ".env"
+        Write-Host "[✓] Environment file created" -ForegroundColor Green
+    }
 }
 
 Write-Host ""

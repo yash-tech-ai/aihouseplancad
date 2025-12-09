@@ -9,7 +9,10 @@ Write-Host ""
 Set-Location backend
 
 # Activate virtual environment
-& .\venv\Scripts\Activate.ps1
+$activateScript = ".\venv\Scripts\Activate.ps1"
+if (Test-Path $activateScript) {
+    & $activateScript
+}
 
 Write-Host "[INFO] Running comprehensive tests..." -ForegroundColor Yellow
 Write-Host ""
