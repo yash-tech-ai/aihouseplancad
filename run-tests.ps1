@@ -1,9 +1,8 @@
-# PowerShell Script for Testing
-# AI Floor Plan Generator
+# PowerShell Script for Testing - AI Floor Plan Generator
 
-Write-Host "╔════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║            🧪 SYSTEM TEST SUITE 🧪                     ║" -ForegroundColor Cyan
-Write-Host "╚════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "========================================================" -ForegroundColor Cyan
+Write-Host "   SYSTEM TEST SUITE" -ForegroundColor Cyan
+Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host ""
 
 Set-Location backend
