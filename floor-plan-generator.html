@@ -495,7 +495,7 @@
     <div class="container">
         <div class="header">
             <h1>🏗️ Professional CAD Floor Plan Generator</h1>
-            <p>AI-Powered Design | Interactive Editing | CAD Integration | 3D Visualization</p>
+            <p>AI-Powered Design | Interactive Editing | CAD Integration | Professional Export</p>
             
             <div class="cad-integration-banner">
                 <div>
@@ -517,7 +517,8 @@
             <button class="tab" onclick="switchTab(2)">⚙️ Smart Allocation</button>
             <button class="tab" onclick="switchTab(3)">🎨 Floor Plan</button>
             <button class="tab" onclick="switchTab(4)">✏️ Edit & Customize</button>
-            <button class="tab" onclick="switchTab(5)">🎯 3D View</button>
+            <!-- 3D View disabled as per user request -->
+            <!-- <button class="tab" onclick="switchTab(5)">🎯 3D View</button> -->
             <button class="tab" onclick="switchTab(6)">💾 Export & CAD</button>
         </div>
 
@@ -840,8 +841,8 @@
                 </div>
             </div>
 
-            <!-- Tab 5: 3D View -->
-            <div class="tab-content">
+            <!-- Tab 5: 3D View - DISABLED -->
+            <div class="tab-content" style="display: none;">
                 <h2>3D Visualization</h2>
                 <div class="alert alert-info">
                     <strong>🎯 3D Preview:</strong> Interactive 3D representation of your floor plan with realistic depth and perspective.
@@ -909,11 +910,12 @@
                         <h4>SVG Vector</h4>
                         <p style="color: #718096; font-size: 0.85em; margin-top: 5px;">Scalable graphics</p>
                     </div>
-                    <div class="export-btn" onclick="export3D()">
+                    <!-- 3D Export disabled -->
+                    <!-- <div class="export-btn" onclick="export3D()">
                         <div style="font-size: 3em;">🎯</div>
                         <h4>3D Model</h4>
                         <p style="color: #718096; font-size: 0.85em; margin-top: 5px;">OBJ/FBX format</p>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div style="margin-top: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 15px; color: white;">
