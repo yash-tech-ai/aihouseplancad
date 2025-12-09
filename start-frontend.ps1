@@ -7,15 +7,15 @@ Write-Host "╚═════════════════════�
 Write-Host ""
 
 # Check if Python is installed
-try {
-    $pythonVersion = python --version 2>&1
-    Write-Host "[✓] Python found: $pythonVersion" -ForegroundColor Green
-} catch {
+$pythonCheck = Get-Command python -ErrorAction SilentlyContinue
+if (-not $pythonCheck) {
     Write-Host "[ERROR] Python is not installed!" -ForegroundColor Red
     Read-Host "Press Enter to exit"
     exit 1
 }
 
+$pythonVersion = python --version 2>&1
+Write-Host "[✓] Python found: $pythonVersion" -ForegroundColor Green
 Write-Host ""
 Write-Host "[✓] Starting frontend on http://localhost:8000" -ForegroundColor Green
 Write-Host "[✓] Open your browser to:" -ForegroundColor Green
